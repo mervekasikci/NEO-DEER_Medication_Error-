@@ -1,2 +1,5 @@
-# NEO-DEER_Medication_Error-
-A Web-Tool for Machine Learning-Based Medication Error Prediction
+# A Web-Tool for Machine Learning-Based Medication Error Prediction
+
+Prospectively 11,908 medication orders from 412 NICU patients over 17 months were comprehensively analyzed by a pediatric clinical pharmacist. In 174 (42.2%) of these patients, at least one type of medication error (prescribing and monitoring process) originating from a physician was determined. Also, in 235 (57.0%) of these patients, at least one type of medication error (preparation and administration process) originating from a nurse was determined. A machine learning-based medication error prediction tool was developed with these data. The positive predictive value and AUC value are 0.944 and 0.920, respectively. It is estimated that medication errors can be prevented before they occur, with the use of this free, user-friendly, online, non-registered, and high-performance web-tool, which predicts medication errors in each patient admitted to the NICUs.
+
+The link of the web-tool: http://softmed.hacettepe.edu.tr/NEO-DEER_Medication_Error/
