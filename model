@@ -1,0 +1,74 @@
+library("caret") 
+library("GMDH2")
+
+data <- read.csv("~data.csv")
+set.seed(1234)
+
+#################################################################################
+############################# Categorical variables #############################
+#################################################################################
+data$drugerror <- as.factor(data$drugerror)
+
+x <- cbind(data$J.Antiinfectives_for_systemic_use, data$N.Nerveous_system,
+           data$A.Alimentary_tract_and_metabolism, data$R.Respiratory_system)
+
+x<-as.data.frame(x)
+
+names(x) <- c("J.Antiinfectives_for_systemic_use", "N.Nerveous_system",
+              "A.Alimentary_tract_and_metabolism", "R.Respiratory_system")
+
+#################################################################################
+############################## Numerical variables ##############################
+#################################################################################
+x_numeric<-NULL
+
+data$totalnumberofdrugs <- c(scale(data$totalnumberofdrugs))
+data$PNA <- c(scale(data$PNA))
+data$APGAR2 <- c(scale(data$APGAR2))
+data$doctorweeklyworkinghours <-c(scale(data$doctorweeklyworkinghours))
+data$nurseweeklyworkinghours <-c(scale(data$nurseweeklyworkinghours)) 
+data$nursemonthlyshift <-c(scale(data$nursemonthlyshift)) 
+
+x_numeric <- cbind(data$totalnumberofdrugs, data$PNA, data$APGAR2, data$doctorweeklyworkinghours, 
+                    data$nurseweeklyworkinghours, data$nursemonthlyshift)
+
+
+names(x_numeric) <- c("totalnumberofdrugs", "PNA", "APGAR2", "doctorweeklyworkinghours", 
+                      "nurseweeklyworkinghours", "nursemonthlyshift")
+
+#################################################################################
+################################## Data split ###################################
+#################################################################################
+
+variable_names <- c(names(x), names(x_numeric))
+
+candidate_variables <- data[, (colnames(data) %in% variable_names)]
+
+candidate_variables <- data[, (colnames(data) %in% variable_names)]
+first_data <- cbind(data$drugerror, candidate_variables)
+
+names(first_data)[1] <- "drugerror"
+
+smp_size <- floor(0.70 * nrow(first_data))
+
+train_ind <- sample(seq_len(nrow(first_data)), size = smp_size)
+train <- first_data[train_ind, ]
+test <- first_data[-train_ind, ]
+dim(train)
+dim(test)
+
+names(train)
+str(train)
+
+#################################################################################
+############################# Classification model ##############################
+#################################################################################
+model <- train(drugerror~., data = train,
+                  method="rf", tuneLength  = 10,
+                  trControl = trainControl(method = "cv"))
+summary(model)
+pred_rf <- predict(model, test[,-1])
+perf_rf <- confMat(pred_rf, test$drugerror, verbose = FALSE, positive = "1")
+varImp(model_rf, scale = F)
+
+saveRDS(model, "model.rds")
